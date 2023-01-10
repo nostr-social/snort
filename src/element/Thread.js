@@ -17,7 +17,7 @@ export default function Thread(props) {
 
     const chains = useMemo(() => {
         let chains = new Map();
-        notes.filter(a => a.Kind === EventKind.TextNote).sort((a, b) => b.CreatedAt - a.CreatedAt).forEach((v) => {
+        notes.filter(a => a.Kind === EventKind.TextNote).sort((a, b) => a.CreatedAt - b.CreatedAt).forEach((v) => {
             let replyTo = v.Thread?.ReplyTo?.Event ?? v.Thread?.Root?.Event;
             if (replyTo) {
                 if (!chains.has(replyTo)) {
@@ -47,7 +47,7 @@ export default function Thread(props) {
 
     function renderRoot() {
         if (root) {
-            return <Note data-ev={root} reactions={reactions(root.Id)} deletion={reactions(root.Id, EventKind.Deletion)} isThread />
+            return <Note data-ev={root} reactions={reactions(root.Id)} deletion={reactions(root.Id, EventKind.Deletion)} threadMarker={"start"} />
         } else {
             return <NoteGhost>
                 Loading thread root.. ({notes.length} notes loaded)
@@ -55,22 +55,22 @@ export default function Thread(props) {
         }
     }
 
-    function renderChain(from) {
+    function renderChain(from, inner, depth) {
         if (from && chains) {
             let replies = chains.get(from);
             if (replies) {
-                return (
-                    <div className="indented">
-                        {replies.map(a => {
-                            return (
-                                <>
-                                    <Note data-ev={a} key={a.Id} reactions={reactions(a.Id)} deletion={reactions(a.Id, EventKind.Deletion)} hightlight={thisEvent === a.Id} />
-                                    {renderChain(a.Id)}
-                                </>
-                            )
-                        })}
-                    </div>
-                )
+                return replies.map(a => {
+                    let nextReplies = chains.get(a.Id)?.length ?? 0;
+                    let hasInnerThread = nextReplies > 1 && !inner;
+                    let hasReplies = nextReplies > 0 || replies.length > 1;
+                    let isStart = inner && hasReplies;
+                    return (
+                        <>
+                            <Note data-ev={a} key={a.Id} reactions={reactions(a.Id)} deletion={reactions(a.Id, EventKind.Deletion)} hightlight={thisEvent === a.Id} threadMarker={isStart ? "start" : (hasReplies ? "mid" : "end")} />
+                            {hasInnerThread ? <div className="indented">{renderChain(a.Id, true, depth + 1)}</div> : renderChain(a.Id, false, depth + 1)}
+                        </>
+                    )
+                });
             }
         }
     }
@@ -78,7 +78,7 @@ export default function Thread(props) {
     return (
         <>
             {renderRoot()}
-            {root ? renderChain(root.Id) : null}
+            {root ? renderChain(root.Id, false, 0) : null}
             {root ? null : <>
                 <h3>Other Replies</h3>
                 {brokenChains.map(a => {

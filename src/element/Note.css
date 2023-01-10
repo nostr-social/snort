@@ -22,37 +22,63 @@
     color: var(--gray-light);
 }
 
-.note > .body {
+.note .thread-body {
+    display: grid;
+    grid-template-columns: 40px auto;
+}
+
+.note .marker {
+    background-color: var(--gray-light);
+    width: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: -1;
+}
+
+.note .marker.start {
+    height: calc(100% + 47px);
+}
+
+.note .marker.mid {
+    height: calc(100% + 47px + 50px);
+    margin-top: -51px;
+}
+
+.note .marker.end {
+    margin-top: -51px;
+    height: 10px;
+}
+
+.note .body {
     padding: 10px 5px;
     white-space: pre-wrap;
     overflow: hidden;
     word-break: normal;
 }
 
-.note > .body img, .note > .body video, .note > .body iframe {
+.note .body img, .note .body video, .note .body iframe {
     max-width: 100%;
     max-height: 500px;
     margin: 10px auto;
     display: block;
 }
 
-.note > .body iframe, note > .body video {
+.note .body iframe, note .body video {
     width: -webkit-fill-available;
     aspect-ratio: 16 / 9;
 }
 
-.note > .header img:hover, .note > .header .name > .reply:hover, .note .body:hover {
+.note .header img:hover, .note .header .name .reply:hover, .note .body:hover {
     cursor: pointer;
 }
 
-.note > .footer {
+.note .footer {
     padding: 10px 0;
     text-align: right;
 }
 
 .indented {
-    border-left: 3px solid var(--gray-tertiary);
-    padding-left: 2px;
+    margin-left: 20px;
 }
 
 .indented .active {
@@ -61,11 +87,6 @@
     border-left: 3px solid var(--highlight);
 }
 
-
-.indented .note {
-    border-bottom: none;
-    padding: 4px;
-}
 
 .note .body a {
     color: var(--highlight);

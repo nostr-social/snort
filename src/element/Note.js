@@ -14,7 +14,7 @@ export default function Note(props) {
     const navigate = useNavigate();
     const opt = props.options;
     const dataEvent = props["data-ev"];
-    const { data, isThread, reactions, deletion, hightlight } = props
+    const { data, isThread, reactions, deletion, hightlight, threadMarker } = props
 
     const users = useSelector(s => s.users?.users);
     const ev = dataEvent ?? Event.FromObject(data);
@@ -77,8 +77,27 @@ export default function Note(props) {
         );
     }
 
+    function body() {
+        if (threadMarker) {
+            return (
+                <div className="thread-body">
+                    <div className={`marker ${threadMarker}`}></div>
+                    <div className="body" onClick={(e) => goToEvent(e, ev.Id)}>
+                        {transformBody()}
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className="body" onClick={(e) => goToEvent(e, ev.Id)}>
+                    {transformBody()}
+                </div>
+            )
+        }
+    }
+
     return (
-        <div className={`note ${hightlight ? "active" : ""} ${isThread ? "thread" : ""}`}>
+        <div className={`note${hightlight ? " active" : ""}${isThread ? " thread" : ""}`}>
             {options.showHeader ?
                 <div className="header flex">
                     <ProfileImage pubkey={ev.RootPubKey} subHeader={replyTag()} />
@@ -87,9 +106,7 @@ export default function Note(props) {
                             <NoteTime from={ev.CreatedAt * 1000} />
                         </div> : null}
                 </div> : null}
-            <div className="body" onClick={(e) => goToEvent(e, ev.Id)}>
-                {transformBody()}
-            </div>
+            {body()}
             {options.showFooter ? <NoteFooter ev={ev} reactions={reactions} /> : null}
         </div>
     )

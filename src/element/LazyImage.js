@@ -14,9 +14,8 @@ export default function LazyImage(props) {
         })
     }, [inView]);
 
-    return (
-        <div ref={ref}>
-            {shown ? <img {...props} /> : null}
-        </div>
-    )
+    if (shown)
+        return <img {...props} />
+    else
+        return <div ref={ref}></div>
 }
