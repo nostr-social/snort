@@ -100,7 +100,7 @@ code {
 }
 
 .btn-rnd {
-  border-radius: 25px;
+  border-radius: 100%;
 }
 
 textarea {
