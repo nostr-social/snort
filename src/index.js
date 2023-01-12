@@ -19,6 +19,8 @@ import Store from "./state/Store";
 import NotificationsPage from './pages/Notifications';
 import NewUserPage from './pages/NewUserPage';
 import SettingsPage from './pages/SettingsPage';
+import MessagesPage from './pages/MessagesPage';
+import ChatPage from './pages/ChatPage';
 
 export const System = new NostrSystem();
 
@@ -34,10 +36,10 @@ root.render(
             <Route path="/e/:id" exact element={<EventPage />} />
             <Route path="/p/:id" exact element={<ProfilePage />} />
             <Route path="/notifications" exact element={<NotificationsPage />} />
+            <Route path="/messages" exact element={<MessagesPage />} />
+            <Route path="/messages/:pubkey" exact element={<ChatPage />} />
             <Route path="/new" exact element={<NewUserPage />} />
-            <Route path="/settings" exact element={<SettingsPage />}>
-              <Route path="/settings/relays" exact element={<h2>Relays</h2>} />
-            </Route>
+            <Route path="/settings" exact element={<SettingsPage />} />
           </Routes>
         </Layout>
       </Router>
